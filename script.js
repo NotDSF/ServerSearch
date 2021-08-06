@@ -11,8 +11,9 @@
 
 (function() {
     'use strict';
-
-    let GameID = document.URL.match(/games\/(\d+)\//)[1];
+    
+    let Version = "0.3"; // note to self: REMEMBER TO UPDATE MONKEY
+    let GameID  = document.URL.match(/games\/(\d+)\//)[1];
 
     function GetServers(Index) {
         return new Promise((resolve, reject) => {
