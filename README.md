@@ -27,4 +27,4 @@ https://greasyfork.org/en/scripts/430402-rosearcher
 
 ## Alert
 
-**name stolen from slappy since im very lazy**
+**name stolen from [slappy](https://github.com/Slappy826/) since im very lazy**
