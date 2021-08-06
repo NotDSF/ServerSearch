@@ -24,3 +24,7 @@ https://greasyfork.org/en/scripts/430402-rosearcher
 * Under the 'RoSearcher' section, you will find the 'Find empty server' button. Click it to start the script.
 
 ![](https://i.imgur.com/pYsJMyP.png)
+
+## Alert
+
+**name stolen from slappy since im very lazy**
