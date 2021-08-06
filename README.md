@@ -6,6 +6,9 @@ Find empty Roblox servers at the click of a button.
 
 https://greasyfork.org/en/scripts/430402-rosearcher
 
+## Requirements
+* [Tampermonkey](https://www.tampermonkey.net/)
+
 ## Usage
 
 * Visit the Roblox game of your choice.
