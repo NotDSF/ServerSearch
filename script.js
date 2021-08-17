@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RoSearcher
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  Find empty Roblox servers at the click of a button.
 // @author       https://github.com/NotDSF
 // @match        https://www.roblox.com/games/*
@@ -11,9 +11,13 @@
 
 (function() {
     'use strict';
+
+    let Cookie = document.cookie.match(/rosearch=(?<json>{.*?});/);
+    let Options = Cookie?.groups.json ? JSON.parse(Cookie?.groups.json) : {};
     
-    let Version = "0.3"; // note to self: REMEMBER TO UPDATE MONKEY
-    let GameID  = document.URL.match(/games\/(\d+)\//)[1];
+    let Version = "0.4";
+    let GameID = document.URL.match(/games\/(\d+)\//)[1];
+    let GameOptions = Options[GameID] || {};
 
     function GetServers(Index) {
         return new Promise((resolve, reject) => {
@@ -26,17 +30,37 @@
         });
     }
 
+    function SaveOptions() {
+        let Status     = document.getElementById("server-status");
+        let MaxPing    = document.getElementById("ping-box").value;
+        let Iterator   = document.getElementById("iterator-box").value;
+        let MaxPlayers = document.getElementById("player-box").value;
+        let CookieData = {};
+        
+        if (MaxPing.length) CookieData.MaxPing = MaxPing;
+        if (Iterator.length) CookieData.Iterator = Iterator;
+        if (MaxPlayers.length) CookieData.MaxPlayers = MaxPlayers;
+
+        let StatusBackup = Status.innerHTML;
+        
+        Options[GameID] = CookieData;
+        Status.innerHTML = "Saved options!";
+        document.cookie = `rosearch=${JSON.stringify(Options)}; path=/games; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
+        setTimeout(() => Status.innerHTML = StatusBackup, 2000);
+    }
+
     fetch("https://raw.githubusercontent.com/NotDSF/RoSearcher/main/script-version")
         .then(res => res.text())
         .then(body => {
-            if (body !== Version) {
+            if (body.trim() !== Version) {
                 if (confirm("A new version of RoSearch is available, would you like to download it?")) {
                     document.location.href = "https://greasyfork.org/en/scripts/430402-rosearcher";
                 }
             }
         })
         .catch(er => {
-            alert("RoSearcher Error:", er.toString());
+            alert("RoSearcher Error: " + er.toString());
             throw er;
         });
 
@@ -59,7 +83,7 @@
 
         while (true) {
             if (LowestServer && LowestServer.Len <= MaxPlayers && LowestServer.Ping <= MaxPing) {
-                Status.innerHTML = `Found server! Players: ${LowestServer.Len} Ping: ${LowestServer.Ping}. Joining...`;
+                Status.innerHTML = `Found server! Players: ${LowestServer.Len} Ping: ${LowestServer.Ping} Index: ${Index}. Joining...`;
                 eval(LowestServer.JoinScript);
                 break;
             }
@@ -74,7 +98,7 @@
                     if (LowestServer.Len > MaxPlayers) alert(`We couldn't find a server with ${MaxPlayers} players or below! (Try editing your options)`);
                     if (LowestServer.Ping > MaxPing) alert(`We couldn't find a server with ${MaxPing} ping or below! (Try editing your options)`);
 
-                    Status.innerHTML = `Found server! Players: ${LowestServer.Len} Ping: ${LowestServer.Ping}. Joining...`;
+                    Status.innerHTML = `Found server! Players: ${LowestServer.Len} Ping: ${LowestServer.Ping} Index: ${Index}. Joining...`;
                     eval(LowestServer.JoinScript);
                     break;
                 }
@@ -130,6 +154,7 @@
     pingbox.rows = 1;
     pingbox.style = "overflow: hidden; overflow-wrap: break-word; resize: none; height: 30px; margin-bottom: 5px; display: inherit; border-radius: 3px; width: 330px;";
     pingbox.placeholder = "Max Ping (Leave Blank For Default)";
+    pingbox.innerHTML = GameOptions.MaxPing || "";
     pingbox.id = "ping-box";
 
     let maxPlayer = document.createElement("textarea");
@@ -137,6 +162,7 @@
     maxPlayer.rows = 1;
     maxPlayer.style = "overflow: hidden; overflow-wrap: break-word; resize: none; height: 30px; margin-bottom: 5px; display: inherit; border-radius: 3px; width: 330px;";
     maxPlayer.placeholder = "Max Players (Leave Blank For Default)";
+    maxPlayer.innerHTML = GameOptions.MaxPlayers || "";
     maxPlayer.id = "player-box";
 
     let Iterator = document.createElement("textarea");
@@ -144,6 +170,7 @@
     Iterator.rows = 1;
     Iterator.style = "overflow: hidden; overflow-wrap: break-word; resize: none; height: 30px; margin-bottom: 5px; display: inherit; border-radius: 3px; width: 330px;";
     Iterator.placeholder = "Iterator (Leave Blank For Default)";
+    Iterator.innerHTML = GameOptions.Iterator || "";
     Iterator.id = "iterator-box";
     
     let fakeButton = document.createElement("span");
@@ -152,10 +179,16 @@
     fakeButton.onclick = main;
     fakeButton.style = "display: inherit; width: min-content; margin-bottom: 20px;";
 
+    let fakeButton2 = document.createElement("span");
+    fakeButton2.className = "btn-secondary-md btn-more";
+    fakeButton2.innerHTML = "Save Options";
+    fakeButton2.onclick = SaveOptions;
+    fakeButton2.style = "display: inherit; width: min-content; margin-bottom: 5px;";
+
     let status = document.createElement("span");
     status.className = "section-content-off";
     status.id = "server-status";
     status.style = "display: inherit;";
 
-    ParentDiv.prepend(ContainerHead, maxPlayer, pingbox, Iterator, fakeButton, status);
+    ParentDiv.prepend(ContainerHead, maxPlayer, pingbox, Iterator, fakeButton2, fakeButton, status);
 })();
