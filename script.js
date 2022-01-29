@@ -14,7 +14,7 @@
 
     let Cookie = document.cookie.match(/rosearch=(?<json>{.*?});/);
     let Options = Cookie?.groups.json ? JSON.parse(Cookie?.groups.json) : {};
-    
+
     let Version = "0.5";
     let GameID = document.URL.match(/games\/(\d+)\//)[1];
     let GameOptions = Options[GameID] || {};
@@ -35,12 +35,12 @@
         let MaxPing    = document.getElementById("ping-box").value;
         let MaxPlayers = document.getElementById("player-box").value;
         let CookieData = {};
-        
+
         if (MaxPing.length) CookieData.MaxPing = MaxPing;
         if (MaxPlayers.length) CookieData.MaxPlayers = MaxPlayers;
 
         let StatusBackup = Status.innerHTML;
-        
+
         Options[GameID] = CookieData;
         Status.innerHTML = "Saved options!";
         document.cookie = `rosearch=${JSON.stringify(Options)}; path=/games; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
@@ -94,7 +94,7 @@
     maxPlayer.placeholder = "Max Players (Leave Blank For Default)";
     maxPlayer.innerHTML = GameOptions.MaxPlayers || "";
     maxPlayer.id = "player-box";
-    
+
     let status = document.createElement("span");
     status.className = "section-content-off";
     status.id = "server-status";
@@ -109,7 +109,7 @@
         let MaxServerP  = parseInt(Stats[5].children[1].innerText);
         let ActiveP     = parseInt(Stats[0].children[1].innerText.replace(",", ""));
         let Iterator    = Math.floor(ActiveP / (MaxServerP * 9));
-        
+
         console.log(MaxPing, MaxPlayers, Iterator);
         status.innerHTML = "Looking for servers...";
 
@@ -130,7 +130,7 @@
 
     let fakeButton = document.createElement("span");
     fakeButton.className = "btn-secondary-md btn-more";
-    fakeButton.innerHTML = "Find Empty Server";
+    fakeButton.innerHTML = "Find Server";
     fakeButton.onclick = main;
     fakeButton.style = "display: inherit; width: min-content; margin-bottom: 20px;";
 
