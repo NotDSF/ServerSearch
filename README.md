@@ -1,9 +1,8 @@
 # RoSearcher
-
 Find roblox servers at the click of a button.
 
-## Requirements
-* [Tampermonkey](https://www.tampermonkey.net/)
+## Install
+https://greasyfork.org/en/scripts/430402-rosearcher
 
 ## Options
 
@@ -18,4 +17,4 @@ Find roblox servers at the click of a button.
 * View the 'Servers' tab.
 * Under the 'RoSearcher' section, you will find the 'Find empty server' button. Click it to start the script.
 
-![](https://i.imgur.com/NXb9RUA.png)
+![](https://i.imgur.com/LxmfZbg.png)
