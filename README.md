@@ -1,4 +1,4 @@
-# RoSearcher
+# ServerSearch
 Find roblox servers meeting your specified options within seconds.
 
 Why? Well this can be used in many ways, for example:
