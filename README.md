@@ -13,7 +13,7 @@ Why? Well this can be used in many ways, for example:
 ## Usage
 - Visit the Roblox game of your choice.
 - View the `Servers` tab.
-- Under the `RoSearcher` section, you will find the `Find Server` button. Click it to start the script.
+- Under the `ServerSearch` section, you will find the `Find Server` button. Click it to start the script.
 > :warning: You might have to wait a couple of seconds for the script to start
 
 ## Preview

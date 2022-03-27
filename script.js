@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         RoSearcher
+// @name         ServerSearch
 // @namespace    http://tampermonkey.net/
 // @version      0.6
 // @description  Find roblox servers at the click of a button.
@@ -56,7 +56,7 @@
     // container header
 
     let Title = document.createElement("h3");
-    Title.innerHTML = "RoSearch";
+    Title.innerHTML = "ServerSearch";
 
     ContainerHead.className = "container-header";
     ContainerHead.prepend(Title);
