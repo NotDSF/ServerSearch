@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RoSearcher
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  Find roblox servers at the click of a button.
 // @author       https://github.com/NotDSF
 // @match        https://www.roblox.com/games/*
@@ -14,8 +14,6 @@
 
     let Cookie = document.cookie.match(/rosearch=(?<json>{.*?});/);
     let Options = Cookie?.groups.json ? JSON.parse(Cookie?.groups.json) : {};
-    
-    let Version = "0.5";
     let GameID = document.URL.match(/games\/(\d+)\//)[1];
     let GameOptions = Options[GameID] || {};
 
@@ -47,20 +45,6 @@
 
         setTimeout(() => Status.innerHTML = StatusBackup, 2000);
     }
-
-    fetch("https://raw.githubusercontent.com/NotDSF/RoSearcher/main/script-version")
-        .then(res => res.text())
-        .then(body => {
-            if (body.trim() !== Version) {
-                if (confirm("A new version of RoSearch is available, would you like to download it?")) {
-                    document.location.href = "https://greasyfork.org/en/scripts/430402-rosearcher";
-                }
-            }
-        })
-        .catch(er => {
-            alert("RoSearcher Error: " + er.toString());
-            throw er;
-        });
 
     let GameInstances = document.getElementById("game-instances");
     let ParentDiv     = document.createElement("div");
@@ -109,22 +93,34 @@
         let MaxServerP  = parseInt(Stats[5].children[1].innerText);
         let ActiveP     = parseInt(Stats[0].children[1].innerText.replace(",", ""));
         let Iterator    = Math.floor(ActiveP / (MaxServerP * 9));
-        
-        console.log(MaxPing, MaxPlayers, Iterator);
+        let TimeNow     = Date.now();
+
         status.innerHTML = "Looking for servers...";
 
         while (true) {
             let Servers = await GetServers(Iterator);
-            let Matched = Servers.Collection.filter((server) => server.CurrentPlayers.length <= MaxPlayers && server.Ping <= MaxPing).shift();
+            if (!Servers.Collection.length) {
+                status.innerHTML = "Couldn't find any servers meeting your options, try editing your options!";
+                break;
+            }
 
-            if (Matched) {
-                status.innerHTML = `Found server! Players: ${Matched.CurrentPlayers.length} Ping: ${Matched.Ping} Index: ${Iterator}`;
-                eval(Matched.JoinScript);
+            let LowerMatch = Servers.Collection.filter((server) => server.CurrentPlayers.length <= MaxPlayers && server.Ping <= MaxPing).shift();
+            let ExactMatch = Servers.Collection.filter((server) => server.CurrentPlayers.length == MaxPlayers && server.Ping <= MaxPing).shift();
+
+            if (ExactMatch) {
+                status.innerHTML = `Found server! Players: ${ExactMatch.CurrentPlayers.length} Ping: ${ExactMatch.Ping} Index: ${Iterator} Took: ${(Date.now() - TimeNow) / 1000}s`;
+                eval(ExactMatch.JoinScript);
+                break;
+            }
+
+            if (LowerMatch) {
+                status.innerHTML = `We couldn't find an exact match however we found a lower one! Players: ${LowerMatch.CurrentPlayers.length} Ping: ${LowerMatch.Ping} Index: ${Iterator} Took: ${(Date.now() - TimeNow) / 1000}s`;
+                eval(LowerMatch.JoinScript);
                 break;
             }
 
             status.innerHTML = `Index: ${Iterator}.`;
-            Iterator += Math.floor(ActiveP / (MaxServerP * 9));
+            Iterator += Math.floor(ActiveP / (MaxServerP * Servers.Collection.length));
         }
     }
 
